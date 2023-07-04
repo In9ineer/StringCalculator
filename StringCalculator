@@ -1,0 +1,151 @@
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) throws Exception{
+        Scanner scan = new Scanner(System.in);
+        String entry = scan.nextLine();
+
+        char sign = identifySign (entry);                                 //знак выражения, определение знака
+        String[] operands = definingOperands (entry, sign);               //строки разделенные по знаку
+        operandsLength (operands);                                         //проверка введенной строки на кол-во символов
+        checkingNumber (operands);                                        //проверка, что первый операнд не число
+
+
+        if (sign == '+'){
+            String result = sum (operands);
+            System.out.println("\"" + result + "\"");
+        }
+        else if ((sign == '-')){
+            String result = minus (operands);
+            System.out.println("\"" + result + "\"");
+        }
+        else if ((sign == '*')){
+            multiplication(operands);
+        }
+        else if ((sign == '/')){
+            division (operands);
+        }
+    }
+
+    public static void operandsLength (String[] operands) throws Exception{           // проверка длинны введенных строк
+        String operands1 = operands[0].replace("\"", "");
+        String operands2 = operands[1].replace("\"", "");
+        if ((operands1.length()>10) || (operands2.length()>10)){
+            throw new Exception ("Введите строки не более 10 символов каждая");
+        }
+    }
+
+    public static void division (String[] operands) throws Exception {              // метод деление строки на число
+        int x;
+        try {
+            x = Integer.parseInt(operands[1]);
+        } catch (NumberFormatException e) {
+            throw new Exception ("Для деления второй операнд должен быть числом");
+        }
+        if ((!operands[0].startsWith("\"") || !operands[0].endsWith("\""))) {
+            throw new Exception("Для деления первый операнд должен быть в кавычках");
+        }
+        if (x<1 || x>10){
+            throw new Exception ("Для деления второй операнд должен быть от 1 до 10(включительно)");
+        }
+        operands[0] = operands[0].replace("\"", "");
+        int y = (operands[0].length()) /x;
+        String result = operands[0];
+        System.out.print("\"");
+        for (int i =0; i<y; i++){
+            System.out.print(result.charAt(i));
+        }
+        System.out.print("\"");
+    }
+
+    public static void multiplication (String[] operands) throws Exception {           //метод умножает строку на число
+        String result = new String();
+        int x;
+        try {
+            x = Integer.parseInt(operands[1]);
+        } catch (NumberFormatException e) {
+            throw new Exception ("Для умножения второй операнд должен быть числом");
+        }
+        if ((!operands[0].startsWith("\"") || !operands[0].endsWith("\""))) {
+            throw new Exception ("Для умножения первый операнд должен быть в кавычках");
+        }
+        if (x<1 || x>10){
+            throw new Exception ("Для умножения второй операнд должен быть от 1 до 10(включительно)");
+        }
+        operands[0] = operands[0].replace("\"", "");
+        for (int i=1; i<=x; i++){
+            result = result + operands[0];
+        }
+        if (result.length()<41){
+            System.out.print("\"" + result + "\"");
+        }
+        else {
+            System.out.print("\"");
+            for (int i = 0; i < 40; i++) {
+                System.out.print(result.charAt(i));
+            }
+            System.out.print("\"...");
+        }
+    }
+
+    public static String minus (String[] operands) throws Exception{           //метод вычитания строк
+        String result;
+        if ((!operands[0].startsWith("\"") || !operands[0].endsWith("\"")) ||
+                (!operands[1].startsWith("\"") || !operands[1].endsWith("\""))) {
+            throw new Exception("Для вычитания операнды должны быть в двойных кавычках");
+        }
+        else {
+            String operands1 = operands[0].replace("\"", "");
+            String operands2 = operands[1].replace("\"", "");
+            result = operands1.replace(operands2, "");
+        }
+        return result;
+    }
+
+    public static String sum(String[] operands) throws Exception{              //метот суммирует строки
+        String result;
+        if ((!operands[0].startsWith("\"") || !operands[0].endsWith("\"")) ||
+                (!operands[1].startsWith("\"") || !operands[1].endsWith("\""))) {
+            throw new Exception("Для сложения операнды должны быть в двойных кавычках");
+        }
+        else {
+            result = operands[0] + operands[1];
+            result = result.replace("\"", "");
+        }
+        return result;
+    }
+    public static void checkingNumber(String[] operands) throws Exception{        //проверка operands[0] на число
+        try {
+            int num = Integer.parseInt(operands[0]);                   //попытка преобразования первого операнда в int
+            throw new Exception("Первый операнд не может быть числом");
+        }
+        catch (NumberFormatException e) {
+        }
+    }
+
+    public static String[] definingOperands (String entry, char sign){          //метод делит строку по знаку
+        String[] operands = entry.split("\\Q" + sign + "\\E");
+        operands[0] = operands[0].trim();                                       //удаление пробелов в начале и конце строки
+        operands[1] = operands[1].trim();
+        return operands;
+    }
+
+    public static char identifySign(String entry) throws Exception{            //метод определяет и возвращает знак
+        char sign;
+        if (entry.contains("+")) {
+            sign = '+';
+        }
+        else if (entry.contains("-")) {
+            sign = '-';
+        }
+        else if (entry.contains("*")) {
+            sign = '*';
+        }
+        else if (entry.contains("/")) {
+            sign = '/';
+        }
+        else {
+            throw new Exception("в строке нет действия (+, -, *, /)");
+        }
+        return sign;
+    }
+}
